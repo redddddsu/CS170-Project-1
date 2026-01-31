@@ -2,6 +2,7 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -72,7 +73,7 @@ void move_right(int tile_zero_index, Node &parent, queue<Node> &node_queue, int 
     }
 }
 
-void u_move_operation(Node &node, queue<Node> &node_queue) {
+void uni_move_operation(Node &node, queue<Node> &node_queue) {
     int tile_zero_index = find_zero_tile_index(node);
 
     move_up(tile_zero_index, node, node_queue, 1);
@@ -122,7 +123,7 @@ void uniform_search(Node &problem, Node &goal) {
                 continue;
             }
             visited.push_back(node);
-            u_move_operation(node, nodes_queue);
+            uni_move_operation(node, nodes_queue);
         }
 
     }
@@ -190,7 +191,7 @@ int calc_misplaced_right(Node &parent, int tile_zero_index, Node &goal) {
     }
     return cost;
 }
-void m_move_operation(Node &node, queue<Node> &node_queue, Node &goal) {
+void mis_move_operation(Node &node, queue<Node> &node_queue, Node &goal) {
     int tile_zero_index = find_zero_tile_index(node);
 
     int lowest_cost = 0;
@@ -218,7 +219,7 @@ void m_move_operation(Node &node, queue<Node> &node_queue, Node &goal) {
     }
 }
 
-void misplaced_tile (Node &problem, Node &goal) {
+void misplaced_tile_search (Node &problem, Node &goal) {
     queue<Node> nodes_queue;
     Node initial_node;
     initial_node.state = problem.state;
@@ -247,12 +248,140 @@ void misplaced_tile (Node &problem, Node &goal) {
                 continue;
             }
             visited.push_back(node);
-            m_move_operation(node, nodes_queue, goal);
+            mis_move_operation(node, nodes_queue, goal);
         }
     }
 }
 
 
+
+
+int manhattan_distance(Node &currentNode, Node &goal) {
+    int total_distance = 0;
+    int distance;
+    int goal_index;
+    int current_number;
+    int currX, currY, goalX, goalY;
+    for (int i = 0; i < 9; i++) {
+        if (currentNode.state[i] != goal.state[i] && currentNode.state[i] != 0) {
+            goal_index = current_number - 1;
+            currX = i % 3;
+            currY = i / 3;
+            goalX = goal_index % 3;
+            goalY = goal_index / 3;
+            distance =  abs(currX - goalX) + abs(currY - goalY);
+            total_distance += distance;
+        }
+    }
+    return distance;
+
+}
+int manhattan_top(Node &parent, int tile_zero_index, Node &goal) {
+    int top = tile_zero_index - 3;
+    Node temp_node;
+    int distance_cost = 0;
+    if (top >= 0) {
+        temp_node = parent;
+        swap(temp_node.state[top], temp_node.state[tile_zero_index]);
+        distance_cost = manhattan_distance(temp_node, goal);
+    }   
+    return distance_cost; 
+}
+int manhattan_bottom(Node &parent, int tile_zero_index, Node &goal) {
+    int bottom = tile_zero_index + 3;
+    Node temp_node;
+    int distance_cost = 0;
+    if (bottom >= 0) {
+        temp_node = parent;
+        swap(temp_node.state[bottom], temp_node.state[tile_zero_index]);
+        distance_cost = manhattan_distance(temp_node, goal);
+    }   
+    return distance_cost; 
+}
+int manhattan_left(Node &parent, int tile_zero_index, Node &goal) {
+    int left = (tile_zero_index % 3) - 1;
+    Node temp_node;
+    int distance_cost = 0;
+    if (left >= 0) {
+        temp_node = parent;
+        swap(temp_node.state[tile_zero_index - 1], temp_node.state[tile_zero_index]);
+        distance_cost = manhattan_distance(temp_node, goal);
+    }   
+    return distance_cost; 
+}
+int manhattan_right(Node &parent, int tile_zero_index, Node &goal) {
+    int right = (tile_zero_index % 3) + 1;
+    Node temp_node;
+    int distance_cost = 0;
+    if (right >= 0) {
+        temp_node = parent;
+        swap(temp_node.state[tile_zero_index - 1], temp_node.state[tile_zero_index]);
+        distance_cost = manhattan_distance(temp_node, goal);
+    }   
+    return distance_cost; 
+}
+
+void man_move_operation(Node &node, queue<Node> &node_queue, Node &goal) {
+    int tile_zero_index = find_zero_tile_index(node);
+    int lowest_cost = 0;
+    vector<int>all_manhattan_cost;
+
+    all_manhattan_cost.push_back(calc_misplaced_top(node, tile_zero_index, goal) + manhattan_top(node, tile_zero_index, goal));
+    all_manhattan_cost.push_back(calc_misplaced_bottom(node, tile_zero_index, goal) + manhattan_bottom(node, tile_zero_index, goal));
+    all_manhattan_cost.push_back(calc_misplaced_left(node, tile_zero_index, goal)+ manhattan_left(node, tile_zero_index, goal));
+    all_manhattan_cost.push_back(calc_misplaced_right(node, tile_zero_index, goal)+ manhattan_right(node, tile_zero_index, goal));
+
+
+    for (int i = 0; i < 4; i++) {
+        lowest_cost = min(all_manhattan_cost[i], lowest_cost);
+    }
+    if (lowest_cost == all_manhattan_cost[0]) {
+        move_up(tile_zero_index, node, node_queue, lowest_cost);
+    }    
+    else if (lowest_cost == all_manhattan_cost[1]) {
+        move_down(tile_zero_index, node, node_queue, lowest_cost);
+    }    
+    else if (lowest_cost == all_manhattan_cost[2]) {
+        move_left(tile_zero_index, node, node_queue, lowest_cost);
+    }    
+    else if (lowest_cost == all_manhattan_cost[3]) {
+        move_right(tile_zero_index, node, node_queue, lowest_cost);
+    }
+}
+
+void manhattan_search(Node &problem, Node &goal) {
+    queue<Node> nodes_queue;
+    Node initial_node;
+    initial_node.state = problem.state;
+    Node node;
+    // push the initial into queue
+    nodes_queue.push(initial_node);
+    vector<Node> visited;
+
+    while (!nodes_queue.empty()) {
+        node = nodes_queue.front();
+        nodes_queue.pop();
+        if (node.state == goal.state) {
+            cout << node.total_cost << endl;
+            return;
+        }
+        else {
+            bool seen = false;    
+            for (int i = 0; i < visited.size(); i++) {
+                if (visited[i].state == node.state) {
+                    seen = true;
+                    break;
+                }
+           
+            }
+            if (seen) {
+                continue;
+            }
+            visited.push_back(node);
+            man_move_operation(node, nodes_queue, goal);
+        }
+    }
+}
 
 int main() {
 
@@ -261,7 +390,7 @@ int main() {
 
     Node test;
     test.state = {1, 2, 3, 4, 5, 6, 0, 7, 8};
-    misplaced_tile(test, goal);
+    manhattan_search(test, goal);
 
 
     return 0;
