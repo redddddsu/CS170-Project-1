@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdlib.h>
+#include <map>
 
 using namespace std;
 
@@ -89,7 +90,7 @@ void uniform_search(Node &problem, Node &goal) {
     Node node;
     // push the initial into queue
     nodes_queue.push(initial_node);
-    vector<Node> visited;
+    map<vector<int>, bool> visited;
 
 
     while (!nodes_queue.empty()) {
@@ -113,7 +114,7 @@ void uniform_search(Node &problem, Node &goal) {
             */
             bool seen = false;    
             for (int i = 0; i < visited.size(); i++) {
-                if (visited[i].state == node.state) {
+                if (visited[node.state]) {
                     seen = true;
                     break;
                 }
@@ -122,7 +123,7 @@ void uniform_search(Node &problem, Node &goal) {
             if (seen) {
                 continue;
             }
-            visited.push_back(node);
+            visited[node.state] = true;
             uni_move_operation(node, nodes_queue);
         }
 
@@ -226,7 +227,8 @@ void misplaced_tile_search (Node &problem, Node &goal) {
     Node node;
     // push the initial into queue
     nodes_queue.push(initial_node);
-    vector<Node> visited;
+    map<vector<int>, bool> visited;
+
 
     while (!nodes_queue.empty()) {
         node = nodes_queue.front();
@@ -238,7 +240,7 @@ void misplaced_tile_search (Node &problem, Node &goal) {
         else {
             bool seen = false;    
             for (int i = 0; i < visited.size(); i++) {
-                if (visited[i].state == node.state) {
+                if (visited[node.state]) {
                     seen = true;
                     break;
                 }
@@ -247,7 +249,7 @@ void misplaced_tile_search (Node &problem, Node &goal) {
             if (seen) {
                 continue;
             }
-            visited.push_back(node);
+            visited[node.state] = true;
             mis_move_operation(node, nodes_queue, goal);
         }
     }
@@ -356,7 +358,7 @@ void manhattan_search(Node &problem, Node &goal) {
     Node node;
     // push the initial into queue
     nodes_queue.push(initial_node);
-    vector<Node> visited;
+    map<vector<int>, bool> visited;
 
     while (!nodes_queue.empty()) {
         node = nodes_queue.front();
@@ -368,7 +370,7 @@ void manhattan_search(Node &problem, Node &goal) {
         else {
             bool seen = false;    
             for (int i = 0; i < visited.size(); i++) {
-                if (visited[i].state == node.state) {
+                if (visited[node.state]) {
                     seen = true;
                     break;
                 }
@@ -377,7 +379,7 @@ void manhattan_search(Node &problem, Node &goal) {
             if (seen) {
                 continue;
             }
-            visited.push_back(node);
+            visited[node.state] = true;
             man_move_operation(node, nodes_queue, goal);
         }
     }
