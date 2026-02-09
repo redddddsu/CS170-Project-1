@@ -104,6 +104,7 @@ void uniform_search(Node &problem, Node &goal) {
     Node initial_node;
     initial_node.state = problem.state;
     Node node;
+    int search_space = 0;
     // push the initial into queue
     nodes_queue.push(initial_node);
     map<vector<int>, bool> visited;
@@ -118,8 +119,8 @@ void uniform_search(Node &problem, Node &goal) {
         node = nodes_queue.top();
         nodes_queue.pop();
         if (node.state == goal.state) {
-            cout << node.depth << endl;
-            cout << node.g << endl;
+            cout << "Depth: " << node.depth << endl;
+            cout << "Search space: " << search_space << endl;
             return;
         }
         else {
@@ -128,18 +129,9 @@ void uniform_search(Node &problem, Node &goal) {
             if repetitve: skip
             if not: branch
             */
-            bool seen = false;    
-            for (int i = 0; i < visited.size(); i++) {
-                if (visited[node.state]) {
-                    seen = true;
-                    break;
-                }
-           
-            }
-            if (seen) {
-                continue;
-            }
+            if (visited[node.state]) continue;
             visited[node.state] = true;
+            search_space++;
             uni_move_operation(node, nodes_queue);
         }
 
@@ -223,6 +215,7 @@ void mis_move_operation(Node &node, priority_queue<Node, vector<Node>, CompareEv
 }
 
 void misplaced_tile_search (Node &problem, Node &goal) {
+    int search_space = 0;
     priority_queue<Node, vector<Node>, CompareEvalution> nodes_queue;
     Node initial_node;
     initial_node.state = problem.state;
@@ -236,12 +229,14 @@ void misplaced_tile_search (Node &problem, Node &goal) {
         node = nodes_queue.top();
         nodes_queue.pop();
         if (node.state == goal.state) {
-            cout << node.g << endl;
+            cout << "Depth: " << node.depth << endl;
+            cout << "Search space: " << search_space << endl;
             return;
         }
         else {
             if (visited[node.state]) continue;
             visited[node.state] = true;
+            search_space++;
             mis_move_operation(node, nodes_queue, goal);
         }
     }
@@ -258,6 +253,7 @@ int manhattan_distance(Node &currentNode, Node &goal) {
     int currX, currY, goalX, goalY;
     for (int i = 0; i < 9; i++) {
         if (currentNode.state[i] != goal.state[i] && currentNode.state[i] != 0) {
+            current_number = currentNode.state[i];
             goal_index = current_number - 1;
             currX = i % 3;
             currY = i / 3;
@@ -267,7 +263,7 @@ int manhattan_distance(Node &currentNode, Node &goal) {
             total_distance += distance;
         }
     }
-    return distance;
+    return total_distance;
 
 }
 int manhattan_top(Node &parent, int tile_zero_index, Node &goal) {
@@ -285,7 +281,7 @@ int manhattan_bottom(Node &parent, int tile_zero_index, Node &goal) {
     int bottom = tile_zero_index + 3;
     Node temp_node;
     int distance_cost = 0;
-    if (bottom >= 0) {
+    if (bottom <= 8) {
         temp_node = parent;
         swap(temp_node.state[bottom], temp_node.state[tile_zero_index]);
         distance_cost = manhattan_distance(temp_node, goal);
@@ -307,9 +303,9 @@ int manhattan_right(Node &parent, int tile_zero_index, Node &goal) {
     int right = (tile_zero_index % 3) + 1;
     Node temp_node;
     int distance_cost = 0;
-    if (right >= 0) {
+    if (right < 3) {
         temp_node = parent;
-        swap(temp_node.state[tile_zero_index - 1], temp_node.state[tile_zero_index]);
+        swap(temp_node.state[tile_zero_index + 1], temp_node.state[tile_zero_index]);
         distance_cost = manhattan_distance(temp_node, goal);
     }   
     return distance_cost; 
@@ -331,6 +327,7 @@ void man_move_operation(Node &node, priority_queue<Node, vector<Node>, CompareEv
 }
 
 void manhattan_search(Node &problem, Node &goal) {
+    int search_space = 0;
     priority_queue<Node, vector<Node>, CompareEvalution> nodes_queue;
     Node initial_node;
     initial_node.state = problem.state;
@@ -343,12 +340,14 @@ void manhattan_search(Node &problem, Node &goal) {
         node = nodes_queue.top();
         nodes_queue.pop();
         if (node.state == goal.state) {
-            cout << node.g << endl;
+            cout << "Depth: " << node.depth << endl;
+            cout << "Search space: " << search_space << endl;
             return;
         }
         else {
             if (visited[node.state]) continue;
             visited[node.state] = true;
+            search_space++;
             man_move_operation(node, nodes_queue, goal);
         }
     }
@@ -361,23 +360,10 @@ int main() {
 
     Node problem;
     problem.state = {0, 7, 2, 4, 6, 1, 3, 5, 8};
-    misplaced_tile_search(problem, goal);
+    manhattan_search(problem, goal);
 
 
     return 0;
 }
 
 
-/*
-{
-1, 2, 3
-4, 5, 6
-7, 8, 0
-}
-
-{
-1, 2, 3
-4, 5, 6
-0, 7, 8
-}
-*/
