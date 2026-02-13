@@ -8,123 +8,8 @@ using namespace std::chrono;
 
 #include "utility.hpp"
 #include "manhattan.hpp"
-#include "misplaced.hpp"
-
-/*
-find the "zero tile" index on board
-"zero tile" is basically the empty tile on in real game
-*/
-
-
-/*
-This is checking whether the move or not is valid
-if the "zero tile" is in bottom left corner for example
-we can only swap up and down
-*/
-// void move_up(int tile_zero_index, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic) {
-//     int top = tile_zero_index - 3;
-//     Node child_node = parent;
-//     if (top >= 0) {
-//         child_node.g = parent.g + 1;
-//         child_node.depth = parent.depth + 1;
-//         child_node.h = heuristic;
-//         child_node.f = child_node.h + child_node.g;
-//         swap(child_node.state[top], child_node.state[tile_zero_index]);
-//         nodes_queue.push(child_node);
-//     }    
-// }
-// void move_down(int tile_zero_index, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic) {
-//     int bottom = tile_zero_index + 3;
-//     Node child_node = parent;
-//     if (bottom <= 8) {
-//         child_node.g = parent.g + 1;
-//         child_node.depth = parent.depth + 1;
-//         child_node.h = heuristic;
-//         child_node.f = child_node.h + child_node.g;
-//         swap(child_node.state[bottom], child_node.state[tile_zero_index]);
-//         nodes_queue.push(child_node);
-//     }    
-// }
-// void move_left(int tile_zero_index, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic) {
-//     int left = (tile_zero_index % 3) - 1;
-//     Node child_node = parent;
-//     if (left >= 0) {
-//         child_node.g = parent.g + 1;
-//         child_node.depth = parent.depth + 1;
-//         child_node.h = heuristic;
-//         child_node.f = child_node.h + child_node.g;
-//         swap(child_node.state[tile_zero_index - 1], child_node.state[tile_zero_index]);
-//         nodes_queue.push(child_node);
-//     }    
-// }
-// void move_right(int tile_zero_index, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic) {
-//     int right = (tile_zero_index % 3) + 1;
-//     Node child_node = parent;
-//     if (right < 3) {
-//         child_node.g = parent.g + 1;
-//         child_node.depth = parent.depth + 1;
-//         child_node.h = heuristic;
-//         child_node.f = child_node.h + child_node.g;
-//         swap(child_node.state[tile_zero_index + 1], child_node.state[tile_zero_index]);
-//         nodes_queue.push(child_node);
-//     }
-// }
-
-void uni_move_operation(Node &node, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
-    int tile_zero_index = find_zero_tile_index(node);
-
-    // move_up(tile_zero_index, node, nodes_queue, 0);
-    // move_down(tile_zero_index, node, nodes_queue, 0);
-    // move_left(tile_zero_index, node, nodes_queue, 0);
-    // move_right(tile_zero_index, node, nodes_queue, 0);
-}
-
-void uniform_search(Node &problem, Node &goal) {
-    priority_queue<Node, vector<Node>, CompareEvalution> nodes_queue;
-    Node initial_node;
-    initial_node.state = problem.state;
-    Node node;
-    int search_space = 0;
-    // push the initial into queue
-    nodes_queue.push(initial_node);
-    map<vector<int>, bool> visited;
-
-
-    while (!nodes_queue.empty()) {
-
-        /*
-        pop the first item in the queue and perform the operations base on cost
-        operations being swap the "zero tile" tile up, down, left, right        
-        */
-        node = nodes_queue.top();
-        nodes_queue.pop();
-        if (node.state == goal.state) {
-            cout << "Depth: " << node.depth << endl;
-            cout << "Search space: " << search_space << endl;
-            return;
-        }
-        else {
-            /*
-            check if the state is repetitve
-            if repetitve: skip
-            if not: branch
-            */
-            if (visited[node.state]) continue;
-            visited[node.state] = true;
-            search_space++;
-            uni_move_operation(node, nodes_queue);
-        }
-
-    }
-}
-
-
-
-
-
-
-
-
+#include "misplaced.hpp" 
+#include "uniform.hpp"
 
 int main() {
 
@@ -165,16 +50,16 @@ int main() {
     problems.push_back(problem7);
     problems.push_back(problem8);
 
-    // cout << "Uniform Search" << endl;
-    // for (int i = 0; i < problems.size(); i++) {
-    //     cout << "Problem: " << i + 1 << endl;
-    //     auto start = high_resolution_clock::now();
-    //     uniform_search(problems[i], goal);
-    //     auto stop = high_resolution_clock::now();
-    //     auto duration = duration_cast<microseconds>(stop - start);
-    //     cout << "Time : " << duration.count() << endl;
-    //     cout << endl;
-    // }
+    cout << "Uniform Search" << endl;
+    for (int i = 0; i < problems.size(); i++) {
+        cout << "Problem: " << i + 1 << endl;
+        auto start = high_resolution_clock::now();
+        uniform_search(problems[i], goal);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time : " << duration.count() << endl;
+        cout << endl;
+    }
 
     cout << "Misplaced Search" << endl;
     for (int i = 0; i < problems.size(); i++) {
@@ -187,16 +72,16 @@ int main() {
         cout << endl;
     }   
 
-    // cout << "Manhattan Search" << endl;
-    // for (int i = 0; i < problems.size(); i++) {
-    //     cout << "Problem: " << i + 1 << endl;
-    //     auto start = high_resolution_clock::now();
-    //     manhattan_search(problems[i], goal);
-    //     auto stop = high_resolution_clock::now();
-    //     auto duration = duration_cast<microseconds>(stop - start);
-    //     cout << "Time : " << duration.count() << endl;
-    //     cout << endl;
-    // }
+    cout << "Manhattan Search" << endl;
+    for (int i = 0; i < problems.size(); i++) {
+        cout << "Problem: " << i + 1 << endl;
+        auto start = high_resolution_clock::now();
+        manhattan_search(problems[i], goal);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time : " << duration.count() << endl;
+        cout << endl;
+    }
 
     return 0;
 }
