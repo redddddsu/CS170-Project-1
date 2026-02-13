@@ -78,7 +78,7 @@ void man_move_operation(Node &node, priority_queue<Node, vector<Node>, CompareEv
 }
 
 void manhattan_search(Node &problem, Node &goal) {
-    int search_space = 0;
+    int node_expanded = 0;
     priority_queue<Node, vector<Node>, CompareEvalution> nodes_queue;
     Node initial_node;
     initial_node.state = problem.state;
@@ -92,13 +92,14 @@ void manhattan_search(Node &problem, Node &goal) {
         nodes_queue.pop();
         if (node.state == goal.state) {
             cout << "Depth: " << node.depth << endl;
-            cout << "Search space: " << search_space << endl;
+            cout << "Nodes Expanded: " << node_expanded << endl;
+            cout << "Queue Size: " << visited.size() + nodes_queue.size() << endl;
             return;
         }
         else {
             if (visited[node.state]) continue;
             visited[node.state] = true;
-            search_space++;
+            node_expanded++;
             man_move_operation(node, nodes_queue, goal);
         }
     }

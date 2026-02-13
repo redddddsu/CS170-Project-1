@@ -46,7 +46,7 @@ void uniform_search(Node &problem, Node &goal) {
     Node initial_node;
     initial_node.state = problem.state;
     Node node;
-    int search_space = 0;
+    int nodes_expanded = 0;
     // push the initial into queue
     nodes_queue.push(initial_node);
     map<vector<int>, bool> visited;
@@ -62,7 +62,9 @@ void uniform_search(Node &problem, Node &goal) {
         nodes_queue.pop();
         if (node.state == goal.state) {
             cout << "Depth: " << node.depth << endl;
-            cout << "Search space: " << search_space << endl;
+            cout << "Nodes Expanded: " << nodes_expanded << endl;
+            cout << "Queue Size: " << visited.size() + nodes_queue.size() << endl;
+
             return;
         }
         else {
@@ -73,7 +75,7 @@ void uniform_search(Node &problem, Node &goal) {
             */
             if (visited[node.state]) continue;
             visited[node.state] = true;
-            search_space++;
+            nodes_expanded++;
             uni_move_operation(node, nodes_queue);
         }
 
