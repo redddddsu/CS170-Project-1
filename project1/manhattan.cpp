@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void move(Node &child_node, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic) {
+void push_queue(Node &child_node, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic) {
     child_node.g = parent.g + 1;
     child_node.depth = parent.depth + 1;
     child_node.h = heuristic;
@@ -72,7 +72,7 @@ void manhattan_top(Node &parent, int tile_zero_index, Node &goal, priority_queue
         child_node = parent;
         swap(child_node.state[top], child_node.state[tile_zero_index]);
         heuristic = manhattan_distance(child_node, goal);
-        move(child_node, parent, nodes_queue, heuristic);
+        push_queue(child_node, parent, nodes_queue, heuristic);
 
     }    
 }
@@ -84,7 +84,7 @@ void manhattan_bottom(Node &parent, int tile_zero_index, Node &goal, priority_qu
         child_node = parent;
         swap(child_node.state[bottom], child_node.state[tile_zero_index]);
         heuristic = manhattan_distance(child_node, goal);
-        move(child_node, parent, nodes_queue, heuristic);
+        push_queue(child_node, parent, nodes_queue, heuristic);
     }    
 }
 void manhattan_left(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
@@ -95,7 +95,7 @@ void manhattan_left(Node &parent, int tile_zero_index, Node &goal, priority_queu
         child_node = parent;
         swap(child_node.state[tile_zero_index - 1], child_node.state[tile_zero_index]);
         heuristic = manhattan_distance(child_node, goal);
-        move(child_node, parent, nodes_queue, heuristic);
+        push_queue(child_node, parent, nodes_queue, heuristic);
     }    
 }
 void manhattan_right(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
@@ -106,7 +106,7 @@ void manhattan_right(Node &parent, int tile_zero_index, Node &goal, priority_que
         child_node = parent;
         swap(child_node.state[tile_zero_index + 1], child_node.state[tile_zero_index]);
         heuristic = manhattan_distance(child_node, goal);
-        move(child_node, parent, nodes_queue, heuristic);
+        push_queue(child_node, parent, nodes_queue, heuristic);
     }    
 }
 
