@@ -1,5 +1,6 @@
 #include "utility.hpp"
 
+// iterate through the current node to find the empty tile
 int find_zero_tile_index(Node &node) {
     int index = 0;
     for (int i = 0; i < node.state.size(); i++) {
@@ -11,6 +12,10 @@ int find_zero_tile_index(Node &node) {
     return index;
 }
 
+/* 
+pushes node onto the queue
+performs the calculation for node depth, operation cost, and evalution function
+*/
 void push_queue(Node &child_node, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic) {
     child_node.g = parent.g + 1;
     child_node.depth = parent.depth + 1;

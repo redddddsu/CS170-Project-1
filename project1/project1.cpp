@@ -50,27 +50,27 @@ int main() {
     problems.push_back(problem7);
     problems.push_back(problem8);
 
-    // cout << "Uniform Search" << endl;
-    // for (int i = 0; i < problems.size(); i++) {
-    //     cout << "Problem: " << i + 1 << endl;
-    //     auto start = high_resolution_clock::now();
-    //     uniform_search(problems[i], goal);
-    //     auto stop = high_resolution_clock::now();
-    //     auto duration = duration_cast<microseconds>(stop - start);
-    //     cout << "Time : " << duration.count() << endl;
-    //     cout << endl;
-    // }
+    cout << "Uniform Search" << endl;
+    for (int i = 0; i < problems.size(); i++) {
+        cout << "Problem: " << i + 1 << endl;
+        auto start = high_resolution_clock::now();
+        uniform_search(problems[i], goal);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time : " << duration.count() << endl;
+        cout << endl;
+    }
 
-    // cout << "Misplaced Search" << endl;
-    // for (int i = 0; i < problems.size(); i++) {
-    //     cout << "Problem: " << i + 1 << endl;
-    //     auto start = high_resolution_clock::now();
-    //     misplaced_tile_search(problems[i], goal);
-    //     auto stop = high_resolution_clock::now();
-    //     auto duration = duration_cast<microseconds>(stop - start);
-    //     cout << "Time : " << duration.count() << endl;
-    //     cout << endl;
-    // }   
+    cout << "Misplaced Search" << endl;
+    for (int i = 0; i < problems.size(); i++) {
+        cout << "Problem: " << i + 1 << endl;
+        auto start = high_resolution_clock::now();
+        misplaced_tile_search(problems[i], goal);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time : " << duration.count() << endl;
+        cout << endl;
+    }   
 
     cout << "Manhattan Search" << endl;
     for (int i = 0; i < problems.size(); i++) {
