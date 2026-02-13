@@ -54,7 +54,7 @@ the priority queue is focused on the evalution function so uniform search ignore
 priority queue focuses on the smallest evalution function
 to check a node, pop it off the queue
 only expand nodes when the current node isn't a dupelicate so it prevent recalculating the same nodes (is visited)
-node_expanded is calculate everytime a node is going to be expanded (is not a dupelicate)
+node_expanded is calculate by incrementing everytime when a node is going to be expanded (is not a dupelicate)
 the queue size is calculate by adding all the nodes that has be been visited and the current amount of item in the queue
 if the goal is reached early, the entire search is complete and stopped
 */
