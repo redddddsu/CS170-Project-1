@@ -1,83 +1,71 @@
-#include "manhattan.hpp"
+#include "misplaced.hpp"
 
-using namespace std;
-
-int manhattan_distance(Node &currentNode, Node &goal) {
-    int total_distance = 0;
-    int distance;
-    int goal_index;
-    int current_number;
-    int currX, currY, goalX, goalY;
+int calculate_misplaced(Node &curr, Node &goal) {
+    int misplaced = 0;
     for (int i = 0; i < 9; i++) {
-        if (currentNode.state[i] != goal.state[i] && currentNode.state[i] != 0) {
-            current_number = currentNode.state[i];
-            goal_index = current_number - 1;
-            currX = i % 3;
-            currY = i / 3;
-            goalX = goal_index % 3;
-            goalY = goal_index / 3;
-            distance =  abs(currX - goalX) + abs(currY - goalY);
-            total_distance += distance;
+            if (goal.state[i] != curr.state[i] && curr.state[i] != 0) {
+                misplaced++;
+            }
         }
-    }
-    return total_distance;
-
+    return misplaced;
 }
-void manhattan_top(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
+
+
+void misplaced_top(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
     int top = tile_zero_index - 3;
     Node child_node;
     int heuristic = 0;
     if (top >= 0) {
         child_node = parent;
         swap(child_node.state[top], child_node.state[tile_zero_index]);
-        heuristic = manhattan_distance(child_node, goal);
+        heuristic = calculate_misplaced(child_node, goal);
         push_queue(child_node, parent, nodes_queue, heuristic);
-    }    
+    }   
 }
-void manhattan_bottom(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
+void misplaced_bottom(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
     int bottom = tile_zero_index + 3;
     Node child_node;
     int heuristic = 0;
     if (bottom <= 8) {
         child_node = parent;
         swap(child_node.state[bottom], child_node.state[tile_zero_index]);
-        heuristic = manhattan_distance(child_node, goal);
+        heuristic = calculate_misplaced(child_node, goal);
         push_queue(child_node, parent, nodes_queue, heuristic);
     }    
 }
-void manhattan_left(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
+void misplaced_left(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
     int left = (tile_zero_index % 3) - 1;
     Node child_node;
     int heuristic = 0;
     if (left >= 0) {
         child_node = parent;
         swap(child_node.state[tile_zero_index - 1], child_node.state[tile_zero_index]);
-        heuristic = manhattan_distance(child_node, goal);
+        heuristic = calculate_misplaced(child_node, goal);
         push_queue(child_node, parent, nodes_queue, heuristic);
     }    
 }
-void manhattan_right(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
+void misplaced_right(Node &parent, int tile_zero_index, Node &goal, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue) {
     int right = (tile_zero_index % 3) + 1;
     Node child_node;
     int heuristic = 0;
     if (right < 3) {
         child_node = parent;
         swap(child_node.state[tile_zero_index + 1], child_node.state[tile_zero_index]);
-        heuristic = manhattan_distance(child_node, goal);
+        heuristic = calculate_misplaced(child_node, goal);
         push_queue(child_node, parent, nodes_queue, heuristic);
-    }    
+    }
 }
-
-void man_move_operation(Node &node, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, Node &goal) {
+void mis_move_operation(Node &node, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, Node &goal) {
     int tile_zero_index = find_zero_tile_index(node);
 
-    manhattan_top(node, tile_zero_index, goal, nodes_queue);
-    manhattan_bottom(node, tile_zero_index, goal, nodes_queue);
-    manhattan_left(node, tile_zero_index, goal, nodes_queue);
-    manhattan_right(node, tile_zero_index, goal, nodes_queue);
+    misplaced_top(node, tile_zero_index, goal, nodes_queue);
+    misplaced_bottom(node, tile_zero_index, goal, nodes_queue);
+    misplaced_left(node, tile_zero_index, goal, nodes_queue);
+    misplaced_right(node, tile_zero_index, goal, nodes_queue);
+
 }
 
-void manhattan_search(Node &problem, Node &goal) {
+void misplaced_tile_search (Node &problem, Node &goal) {
     int search_space = 0;
     priority_queue<Node, vector<Node>, CompareEvalution> nodes_queue;
     Node initial_node;
@@ -86,6 +74,7 @@ void manhattan_search(Node &problem, Node &goal) {
     // push the initial into queue
     nodes_queue.push(initial_node);
     map<vector<int>, bool> visited;
+
 
     while (!nodes_queue.empty()) {
         node = nodes_queue.top();
@@ -99,7 +88,7 @@ void manhattan_search(Node &problem, Node &goal) {
             if (visited[node.state]) continue;
             visited[node.state] = true;
             search_space++;
-            man_move_operation(node, nodes_queue, goal);
+            mis_move_operation(node, nodes_queue, goal);
         }
     }
 }

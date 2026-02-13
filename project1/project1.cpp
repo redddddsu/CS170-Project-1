@@ -8,6 +8,7 @@ using namespace std::chrono;
 
 #include "utility.hpp"
 #include "manhattan.hpp"
+#include "misplaced.hpp"
 
 /*
 find the "zero tile" index on board
@@ -119,107 +120,7 @@ void uniform_search(Node &problem, Node &goal) {
 
 
 
-int calc_misplaced_top(Node &parent, int tile_zero_index, Node &goal) {
-    int top = tile_zero_index - 3;
-    Node temp_node;
-    int cost = 0;
-    if (top >= 0) {
-        temp_node = parent;
-        swap(temp_node.state[top], temp_node.state[tile_zero_index]);
-        for (int i = 0; i < 9; i++) {
-            if (goal.state[i] != temp_node.state[i] && temp_node.state[i] != 0) {
-                cost++;
-            }
-        }
-    }   
-    return cost; 
-}
-int calc_misplaced_bottom(Node &parent, int tile_zero_index, Node &goal) {
-    int bottom = tile_zero_index + 3;
-    Node temp_node;
-    int cost = 0;
-    if (bottom <= 8) {
-        temp_node = parent;
-        swap(temp_node.state[bottom], temp_node.state[tile_zero_index]);
-        for (int i = 0; i < 9; i++) {
-            if (goal.state[i] != temp_node.state[i] && temp_node.state[i] != 0) {
-                cost++;
-            }
-        }
-    }    
-    return cost; 
-}
-int calc_misplaced_left(Node &parent, int tile_zero_index, Node &goal) {
-    int left = (tile_zero_index % 3) - 1;
-    Node temp_node;
-    int cost = 0;
-    if (left >= 0) {
-        temp_node = parent;
-        swap(temp_node.state[tile_zero_index - 1], temp_node.state[tile_zero_index]);
-        for (int i = 0; i < 9; i++) {
-            if (goal.state[i] != temp_node.state[i] && temp_node.state[i] != 0) {
-                cost++;
-            }
-        }
-    }    
-    return cost;
-}
-int calc_misplaced_right(Node &parent, int tile_zero_index, Node &goal) {
-    int right = (tile_zero_index % 3) + 1;
-    Node temp_node;
-    int cost = 0;
-    if (right < 3) {
-        temp_node = parent;
-        swap(temp_node.state[tile_zero_index + 1], temp_node.state[tile_zero_index]);
-        for (int i = 0; i < 9; i++) {
-            if (goal.state[i] != temp_node.state[i] && temp_node.state[i] != 0) {
-                cost++;
-            }
-        }
-    }
-    return cost;
-}
-void mis_move_operation(Node &node, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, Node &goal) {
-    int tile_zero_index = find_zero_tile_index(node);
 
-    int h_top = (calc_misplaced_top(node, tile_zero_index, goal));
-    int h_bot = (calc_misplaced_bottom(node, tile_zero_index, goal));
-    int h_left = (calc_misplaced_left(node, tile_zero_index, goal));
-    int h_right = (calc_misplaced_right(node, tile_zero_index, goal));
-
-    // move_up(tile_zero_index, node, nodes_queue, h_top);
-    // move_down(tile_zero_index, node, nodes_queue, h_bot);
-    // move_left(tile_zero_index, node, nodes_queue, h_left);
-    // move_right(tile_zero_index, node, nodes_queue, h_right);
-}
-
-void misplaced_tile_search (Node &problem, Node &goal) {
-    int search_space = 0;
-    priority_queue<Node, vector<Node>, CompareEvalution> nodes_queue;
-    Node initial_node;
-    initial_node.state = problem.state;
-    Node node;
-    // push the initial into queue
-    nodes_queue.push(initial_node);
-    map<vector<int>, bool> visited;
-
-
-    while (!nodes_queue.empty()) {
-        node = nodes_queue.top();
-        nodes_queue.pop();
-        if (node.state == goal.state) {
-            cout << "Depth: " << node.depth << endl;
-            cout << "Search space: " << search_space << endl;
-            return;
-        }
-        else {
-            if (visited[node.state]) continue;
-            visited[node.state] = true;
-            search_space++;
-            mis_move_operation(node, nodes_queue, goal);
-        }
-    }
-}
 
 
 
@@ -275,27 +176,27 @@ int main() {
     //     cout << endl;
     // }
 
-    //     cout << "Misplaced Search" << endl;
-    // for (int i = 0; i < problems.size(); i++) {
-    //     cout << "Problem: " << i + 1 << endl;
-    //     auto start = high_resolution_clock::now();
-    //     misplaced_tile_search(problems[i], goal);
-    //     auto stop = high_resolution_clock::now();
-    //     auto duration = duration_cast<microseconds>(stop - start);
-    //     cout << "Time : " << duration.count() << endl;
-    //     cout << endl;
-    // }   
-
-    cout << "Manhattan Search" << endl;
+    cout << "Misplaced Search" << endl;
     for (int i = 0; i < problems.size(); i++) {
         cout << "Problem: " << i + 1 << endl;
         auto start = high_resolution_clock::now();
-        manhattan_search(problems[i], goal);
+        misplaced_tile_search(problems[i], goal);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(stop - start);
         cout << "Time : " << duration.count() << endl;
         cout << endl;
-    }
+    }   
+
+    // cout << "Manhattan Search" << endl;
+    // for (int i = 0; i < problems.size(); i++) {
+    //     cout << "Problem: " << i + 1 << endl;
+    //     auto start = high_resolution_clock::now();
+    //     manhattan_search(problems[i], goal);
+    //     auto stop = high_resolution_clock::now();
+    //     auto duration = duration_cast<microseconds>(stop - start);
+    //     cout << "Time : " << duration.count() << endl;
+    //     cout << endl;
+    // }
 
     return 0;
 }

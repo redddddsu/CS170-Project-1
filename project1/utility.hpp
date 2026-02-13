@@ -2,6 +2,7 @@
 #define NODE
 
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -22,5 +23,7 @@ struct CompareEvalution {
 };
 
 int find_zero_tile_index(Node &node);
+void push_queue(Node &child_node, Node &parent, priority_queue<Node, vector<Node>, CompareEvalution> &nodes_queue, int heuristic);
+
 
 #endif
