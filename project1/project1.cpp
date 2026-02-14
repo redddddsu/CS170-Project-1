@@ -40,6 +40,8 @@ int main() {
     Node problem8;
     problem8.state = {0, 7, 2, 4, 6, 1, 3, 5, 8};
 
+    Node problem9;
+
     vector<Node> problems;
     problems.push_back(problem1);
     problems.push_back(problem2);
@@ -50,38 +52,58 @@ int main() {
     problems.push_back(problem7);
     problems.push_back(problem8);
 
-    cout << "Uniform Search" << endl;
-    for (int i = 0; i < problems.size(); i++) {
-        cout << "Problem: " << i + 1 << endl;
-        auto start = high_resolution_clock::now();
-        uniform_search(problems[i], goal);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time : " << duration.count() << endl;
-        cout << endl;
+    cout << "Enter test case: " << endl;
+    cout << "Test 1" << endl;
+    cout << "Test 2" << endl;
+    cout << "Test 3" << endl;
+    cout << "Test 4" << endl;
+    cout << "Test 5" << endl;
+    cout << "Test 6" << endl;
+    cout << "Test 7" << endl;
+    cout << "Test 8" << endl;
+    cout << "Custom test 9" << endl;
+
+    int digit;
+    int test_case;
+    cin >> test_case;
+
+    if (test_case == 9) {
+        cout << "Enter 9 digits from 0-9" << endl;
+        for (int i = 0; i < 9; i++) {
+            cin >> digit;
+            problem9.state.push_back(digit);
+        }
+        problems.push_back(problem9);
     }
+
+    cout << "Test: " << test_case << endl;
+    cout << "Uniform Search" << endl;
+    auto start = high_resolution_clock::now();
+    uniform_search(problems[test_case - 1], goal);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time : " << duration.count() << endl;
+    cout << endl;
 
     cout << "Misplaced Search" << endl;
-    for (int i = 0; i < problems.size(); i++) {
-        cout << "Problem: " << i + 1 << endl;
-        auto start = high_resolution_clock::now();
-        misplaced_tile_search(problems[i], goal);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time : " << duration.count() << endl;
-        cout << endl;
-    }   
+    cout << "Test: " << test_case << endl;
+    start = high_resolution_clock::now();
+    misplaced_tile_search(problems[test_case - 1], goal);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Time : " << duration.count() << endl;
+    cout << endl;
 
     cout << "Manhattan Search" << endl;
-    for (int i = 0; i < problems.size(); i++) {
-        cout << "Problem: " << i + 1 << endl;
-        auto start = high_resolution_clock::now();
-        manhattan_search(problems[i], goal);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time : " << duration.count() << endl;
-        cout << endl;
-    }
+    cout << "Test: " << test_case << endl;
+    start = high_resolution_clock::now();
+    manhattan_search(problems[test_case - 1], goal);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Time : " << duration.count() << endl;
+    cout << endl;
+
+
 
     return 0;
 }
